@@ -10,17 +10,34 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/4.0/ref/settings/
 """
 
+import environ
+import os
 from pathlib import Path
 
+
+env = environ.Env(
+     # set casting, default value
+    DEBUG=(bool, False)
+)
+
+
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
-BASE_DIR = Path(__file__).resolve().parent.parent
+#BASE_DIR = Path(__file__).resolve().parent.parent
+
+# Set the project base directory
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+
+# Take environment variables from .env file
+environ.Env.read_env(os.path.join(BASE_DIR, '.env'))
 
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/4.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-ue*svc=)6=ev3$%6qoc$csg4&@#!(!ra$onxlgihi1p1pra^sd'
+#SECRET_KEY = 'django-insecure-ue*svc=)6=ev3$%6qoc$csg4&@#!(!ra$onxlgihi1p1pra^sd'
+
+SECRET_KEY = env('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -42,10 +59,8 @@ INSTALLED_APPS = [
     'Login',
 
     'rest_framework',
-
-
     'rest_framework.authtoken',
-
+    
 ]
 
 REST_FRAMEWORK = {
@@ -53,7 +68,6 @@ REST_FRAMEWORK = {
         'DEFAULT_AUTHENTICATION_CLASSES':('rest_framework.authentication.TokenAuthentication',),
         'DEFAULT_PAGINATION_CLASS':'rest_framework.pagination.LimitOffsetPagination',
         'PAGE_SIZE':100,
-
 }
 
 
@@ -93,13 +107,12 @@ WSGI_APPLICATION = 'primerApp.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': 'dbDjango',
-        #'NAME': BASE_DIR / 'db.sqlite3',
-        'USER': 'postgres',
-        'PASSWORD': 'carrera10',
-        'HOST': 'localhost',
-        'PORT':  '5432'
+        'ENGINE':  env('ENGINE'),
+        'NAME': env('NAME'),
+        'USER': env('USER'),
+        'PASSWORD': env('PASSWORD'),
+        'HOST': env('HOST'),
+        'PORT':  env('PORT')
     }
 }
 
