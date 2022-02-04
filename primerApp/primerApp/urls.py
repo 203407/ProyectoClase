@@ -40,6 +40,7 @@ urlpatterns = [
     path('api-auth/', include('rest_framework.urls')),
     re_path(r'^api/v1/login/', include('Login.urls')),
     re_path(r'^api/v1/primer_componente/', include('primerComponenete.urls')),
+    re_path(r'^api/v1/loadImage/', include('loadImage.urls'))
 ]
 
 

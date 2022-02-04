@@ -57,6 +57,7 @@ INSTALLED_APPS = [
 
     'primerComponenete',
     'Login',
+    'loadImage',
 
     'rest_framework',
     'rest_framework.authtoken',
