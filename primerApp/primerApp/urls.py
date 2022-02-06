@@ -17,6 +17,11 @@ Including another URLconf
 from django.urls import path, include , re_path
 from django.contrib.auth.models import User
 from rest_framework import routers, serializers, viewsets
+from django.conf import settings
+from django.views.static import serve
+
+
+
 
 # Serializers define the API representation.
 class UserSerializer(serializers.HyperlinkedModelSerializer):
@@ -43,6 +48,10 @@ urlpatterns = [
     re_path(r'^api/v1/loadImage/', include('loadImage.urls'))
 ]
 
-
+urlpatterns += [
+    re_path(r'^assets/(?P<path>.*)$', serve,{
+        'document_root': settings.MEDIA_ROOT,
+    }),
+]
 
 

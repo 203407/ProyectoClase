@@ -1,11 +1,17 @@
 from django.shortcuts import render
 
+# Create your views here.
+from posixpath import split
+from unicodedata import name
+from django.http import QueryDict
+from django.shortcuts import render
+
 from rest_framework.views import APIView 
 from loadImage.serializers import FirstTableSerializer
-from loadImage.models import PrimerModelo
+from loadImage.models import ImgTableModel
 from rest_framework.response import Response
 from rest_framework import status
-
+from loadImage.serializers import FirstTableSerializer
 
 # Create your views here.
 
@@ -29,6 +35,21 @@ def responser_custom(custom, responseData, stats):
 
 class FirstViewList(APIView):
     def get(self, request, format=None):
-        querySet = PrimerModelo.objects.all()
+        querySet = ImgTableModel.objects.all()
         serializer = FirstTableSerializer(querySet, many=True , context= {'request':request})
         return Response(responser_custom('succes',serializer.data, status.HTTP_200_OK))
+
+    def post(self, request, format=None):        
+        serializer = FirstTableSerializer(data=request.data, context={"request":request})                                
+        if serializer.is_valid():                        
+            datos = request.data
+            nameImg = str(datos.__getitem__('url_img')).split(".")
+            datos.__setitem__('name_img',nameImg[0])
+            datos.__setitem__('format_img',nameImg[1])
+            serializer2 = FirstTableSerializer(data=datos, context={"request":request})   
+            if serializer2.is_valid():                                         
+                serializer2.save()                
+            return Response(responser_custom('succes',serializer2.data, status.HTTP_201_CREATED))
+        else:        
+            return Response(responser_custom('error',serializer.errors, status.HTTP_400_BAD_REQUEST))
+
