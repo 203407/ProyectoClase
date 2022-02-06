@@ -53,3 +53,49 @@ class FirstViewList(APIView):
         else:        
             return Response(responser_custom('error',serializer.errors, status.HTTP_400_BAD_REQUEST))
 
+
+class FirstViewDetail(APIView):
+    
+    def get_object(self,pk):
+        try:
+            return ImgTableModel.objects.get(pk=pk)
+        except ImgTableModel.DoesNotExist:
+            return 404
+
+    def get(self,request,pk,format=None):
+        idResponse = self.get_object(pk)        
+        if idResponse != 404:
+            serializer = FirstTableSerializer(idResponse,context={"request":request})            
+            return Response(responser_custom('succes',serializer.data,status.HTTP_200_OK))
+        else:                        
+            return Response(responser_custom('error',"Id no encontrado",status.HTTP_400_BAD_REQUEST))
+   
+    def put(self,request,pk,format=None):
+        idResponse = self.get_object(pk)        
+        if idResponse != 404:
+            serializer = FirstTableSerializer(idResponse, data=request.data, context={"request":request})            
+            if serializer.is_valid():                
+                datos = request.data
+                nameImg = str(datos.__getitem__('url_img')).split(".")
+                datos.__setitem__('name_img',nameImg[0])
+                datos.__setitem__('format_img',nameImg[1])
+                serializer2 = FirstTableSerializer(idResponse, data=datos, context={"request":request})   
+                if serializer2.is_valid():                               
+                    serializer2.save()                                     
+                return Response(responser_custom('succes',serializer2.data,status.HTTP_200_OK))
+            else:                
+                return Response(responser_custom('error',serializer.errors,status.HTTP_400_BAD_REQUEST))
+        else:            
+            return Response(responser_custom('error',"Id no encontrado",status.HTTP_400_BAD_REQUEST))
+    
+    def delete(self,request,pk,format=None):
+        idResponse = self.get_object(pk)        
+        if idResponse != 404:
+            serializer = FirstTableSerializer(idResponse, data=request.data, context={"request":request})
+            if serializer.is_valid():                
+                idResponse.delete()                
+                return Response(responser_custom('succes',serializer.data,status.HTTP_200_OK))
+            else:                
+                return Response(responser_custom('error',serializer.errors,status.HTTP_400_BAD_REQUEST))
+        else:            
+            return Response(responser_custom('error',"Id no encontrado",status.HTTP_400_BAD_REQUEST)) 
