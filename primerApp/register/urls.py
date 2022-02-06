@@ -5,5 +5,5 @@ from django.conf.urls import include
 from register.views import RegisterView
 
 urlpatterns = [
-    re_path(r'^', RegisterView.as_view()),    
+    re_path(r'^usuarios/$', RegisterView.as_view()),    
 ]
