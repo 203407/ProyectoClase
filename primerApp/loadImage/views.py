@@ -87,7 +87,7 @@ class FirstViewDetail(APIView):
                 formato = str(datos.__getitem__('format_img'))
                 file_path = "assets/img/"+name+"."+formato                
                 if os.path.isfile(file_path):
-                    os.remove(file_path) 
+                    os.remove(file_path)                 
 
                 #llenar datos nuevos
                 datos = request.data               
