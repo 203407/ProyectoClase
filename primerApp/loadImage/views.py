@@ -1,3 +1,4 @@
+from operator import delitem
 from django.shortcuts import render
 
 # Create your views here.
@@ -6,18 +7,17 @@ from unicodedata import name
 from django.http import QueryDict
 from django.shortcuts import render
 
-
 from rest_framework.views import APIView 
 from loadImage.serializers import FirstTableSerializer
 from loadImage.models import ImgTableModel
 from rest_framework.response import Response
 from rest_framework import status
-from loadImage.serializers import FirstTableSerializer
 
 from django.utils import timezone
 # Create your views here.
 
 import json
+import os
 
 # Create your views here.
 
@@ -86,7 +86,7 @@ class FirstViewDetail(APIView):
                 datos.__setitem__('format_img',nameImg[1])
                 datos.__setitem__('edit', timezone.now())
                 serializer2 = FirstTableSerializer(idResponse, data=datos, context={"request":request})  
-                 
+                
                 if serializer2.is_valid():                               
                     serializer2.save()                                                         
                 return Response(responser_custom('succes',serializer2.data,status.HTTP_200_OK))
@@ -99,8 +99,17 @@ class FirstViewDetail(APIView):
         idResponse = self.get_object(pk)        
         if idResponse != 404:
             serializer = FirstTableSerializer(idResponse, data=request.data, context={"request":request})
-            if serializer.is_valid():                
+            
+            if serializer.is_valid():    
+                
+                datos = serializer.data               
+                delImg = str(datos.__getitem__('url_img')).split("/")                
+                file_path = "assets/img/"+delImg[-1]
+
+                if os.path.isfile(file_path):
+                   os.remove(file_path)                    
                 idResponse.delete()                
+
                 return Response(responser_custom('succes',serializer.data,status.HTTP_200_OK))
             else:                
                 return Response(responser_custom('error',serializer.errors,status.HTTP_400_BAD_REQUEST))
