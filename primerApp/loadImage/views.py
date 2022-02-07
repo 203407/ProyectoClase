@@ -6,6 +6,7 @@ from posixpath import split
 from unicodedata import name
 from django.http import QueryDict
 from django.shortcuts import render
+from django.conf import settings
 
 from rest_framework.views import APIView 
 from loadImage.serializers import FirstTableSerializer
@@ -80,6 +81,15 @@ class FirstViewDetail(APIView):
             serializer = FirstTableSerializer(idResponse, data=request.data, context={"request":request})            
             if serializer.is_valid():                
                
+                #eliminar imagen antigua       
+                datos = serializer.data               
+                name = str(datos.__getitem__('name_img'))
+                formato = str(datos.__getitem__('format_img'))
+                file_path = "assets/img/"+name+"."+formato                
+                if os.path.isfile(file_path):
+                    os.remove(file_path) 
+
+                #llenar datos nuevos
                 datos = request.data               
                 nameImg = str(datos.__getitem__('url_img')).split(".")
                 datos.__setitem__('name_img',nameImg[0])
@@ -110,6 +120,7 @@ class FirstViewDetail(APIView):
                    os.remove(file_path)                    
                 idResponse.delete()                
 
+                
                 return Response(responser_custom('succes',serializer.data,status.HTTP_200_OK))
             else:                
                 return Response(responser_custom('error',serializer.errors,status.HTTP_400_BAD_REQUEST))
