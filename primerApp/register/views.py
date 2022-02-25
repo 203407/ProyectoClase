@@ -5,6 +5,7 @@ from django.contrib.auth.models import User
 from .serializers import FirstSerializerRegister
 import json
 from rest_framework import status
+from rest_framework.permissions import AllowAny
 
 suce = '{ "message":"succes"}'
 error = '{ "message":"error"}'
@@ -22,14 +23,17 @@ def responser_custom(custom, responseData, stats):
        
 
 class RegisterView(APIView):
-    
+    permission_classes = (AllowAny,)
+
     # get para corroborar que se creo el usuario
     def get(self, request, format=None):
+        
         querySet = User.objects.all()
         serializer = FirstSerializerRegister(querySet, many=True , context= {'request':request})        
         return Response(responser_custom('succes',serializer.data, status.HTTP_200_OK))
     
-    def post(self, request, format=None):       
+    def post(self, request, format=None):      
+    
         serializer= FirstSerializerRegister(data=request.data, context={'request':request})
         
         if serializer.is_valid():
