@@ -118,14 +118,14 @@ class RegisterIdView(APIView):
                 lost = user.save()       
                 prof = serializerP.save()
 
-                if prof.user != null:                        
-                    return Response(prof,status.HTTP_200_OK)
+                print(serializerP.data)
+                if prof.user != None:                        
+                    return Response(status.HTTP_200_OK)
                 else:
                     prof.user = lost 
                     prof.save()
-
-
-                print(prof)                                                                            
+                    return Response(status.HTTP_200_OK)
+                                                                                      
             else:                
                 return Response(user.errors,status.HTTP_400_BAD_REQUEST)
         else:            

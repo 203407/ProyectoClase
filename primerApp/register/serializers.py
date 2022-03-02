@@ -65,8 +65,7 @@ class RegisterSerializer2(serializers.ModelSerializer):
            'first_name': {'required': False},
            'last_name': {'required': False}
        }
-    def __str__(self):
-        return self.id
+   
 
 
 class ProfileSerializerRegister(serializers.ModelSerializer):
