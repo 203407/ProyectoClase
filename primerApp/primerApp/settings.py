@@ -63,6 +63,7 @@ INSTALLED_APPS = [
     'Login',
     'loadImage',
      'register',
+    'Profile',
 
     'rest_framework',
     'rest_framework.authtoken',

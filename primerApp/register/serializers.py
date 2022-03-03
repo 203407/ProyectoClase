@@ -4,8 +4,8 @@ from rest_framework import serializers
 from django.contrib.auth.models import User
 from rest_framework.validators import UniqueValidator
 from django.contrib.auth.password_validation import validate_password
-from register.models import Profile
 from django import forms
+from Profile.models import Profile
 
 class FirstSerializerRegister(serializers.ModelSerializer):
     
@@ -50,9 +50,14 @@ class RegisterSerializer(serializers.ModelSerializer):
 
        user.set_password(validated_data['password'])
        user.save()
-
        
+       prof = Profile(
+           user = user,           
+       )
+       prof.save() 
+
        return user
+               
 
 
 
@@ -66,13 +71,4 @@ class RegisterSerializer2(serializers.ModelSerializer):
            'last_name': {'required': False}
        }
    
-
-
-class ProfileSerializerRegister(serializers.ModelSerializer):
-    class Meta:
-        model = Profile
-        fields = ('user', 'img_profile')
-    
-
- 
 
