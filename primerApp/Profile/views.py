@@ -40,18 +40,17 @@ class RegisterIdView(APIView):
                
                 respuesta = json.dumps(serializer.data)
                 respuesta = json.loads(respuesta)
-                respuesta.update({"img_profile":serializerP.data.__getitem__("img_profile")})
+                respuesta.update({"img_profile":serializerP.data.__getitem__("img_profile")})                
                 
                 return Response(respuesta)
             else:                                 
                 respuesta = json.dumps(serializer.data)                
                 respuesta = json.loads(respuesta)
-                respuesta.update( {"img_profile":0})
+                respuesta.update( {"img_profile":None})
                 return Response(respuesta)
 
         else:                        
             return Response(status.HTTP_400_BAD_REQUEST)
-
 
     def put(self,request,pk,format=None):
         idResponse = self.get_objectU(pk)
@@ -78,97 +77,53 @@ class RegisterIdView(APIView):
             else:     
                 return Response(status.HTTP_400_BAD_REQUEST)
         else:            
-            return Response("Id no encontrado",status.HTTP_400_BAD_REQUEST)
-        
+            return Response("Id no encontrado",status.HTTP_400_BAD_REQUEST) 
 
-
-
-""" 
-class RegisterIdView(APIView):
-    
-
-    def get_objectU(self,pk):
-        try:
-            return User.objects.get(pk=pk)
-        except User.DoesNotExist:
-            return 404  
-    
-    def get_objectP(self,pk):
-        try:
-            return Profile.objects.get(user=pk)
-        except Profile.DoesNotExist:
-            return 404  
-     
-
-    def get(self,request,pk,format=None):
+"""  def put(self,request,pk,format=None):
         idResponse = self.get_objectU(pk)
-
-        if idResponse != 404:
-
-            serializer = RegisterSerializer(idResponse,context={"request":request})
-            idResponseP = self.get_objectP(pk)
-
-            if idResponseP != 404:
-                serializerP = ProfileSerializerRegister(idResponseP,context={"request":request})
-               
-                respuesta = json.dumps(serializer.data)
-                respuesta = json.loads(respuesta)
-                respuesta.update({"img_profile":serializerP.data.__getitem__("img_profile")})
-                
-                return Response(respuesta)
-            else:                                 
-                respuesta = json.dumps(serializer.data)                
-                respuesta = json.loads(respuesta)
-                respuesta.update( {"img_profile":0})
-                return Response(respuesta)
-
-        else:                        
-            return Response(status.HTTP_400_BAD_REQUEST)
-
-
-    def put(self,request,pk,format=None):
-        idResponse = self.get_objectU(pk)        
+        idResponseP = self.get_objectP(pk)             
                        
-        if idResponse != 404:       
-            user = RegisterSerializer2(idResponse,data=request.data, context={"request":request})                                    
-
-            if user.is_valid():                              
-                user.save()                       
-                return Response(status.HTTP_200_OK)
-            else:                
-                return Response(user.errors)
-        else:            
-            return Response("Id no encontrado",status.HTTP_400_BAD_REQUEST)
-        
-
- 
-class RegisterIdPView(APIView):
-    
-
-    def get_objectP(self,pk):
-        try:
-            return Profile.objects.get(user=pk)
-        except Profile.DoesNotExist:
-            return 404 
-
-    def put(self,request,pk,format=None):
-        idResponse = self.get_objectP(pk)        
-                               
-        if idResponse != 404:                        
-            profil = ProfileSerializerRegister(idResponse,data=request.data, context={"request":request})                                    
+        if idResponse != 404 :
+            user = RegisterSerializer2(idResponse,data=request.data, context={"request":request}) 
             
-            if profil.is_valid():               
-
-                nameImg = str(idResponse.img_profile).split("/")                
-                file_path = "assets/img_profile/"+nameImg[1]
-                if os.path.isfile(file_path):                    
-                    os.remove(file_path)
+            if user.is_valid():
                 
-                profil.save()                
+                us = user.save()
+
+                if idResponseP != 404:                                            
+                    
+                    profil = ProfileSerializerRegister(idResponseP,data=request.data, context={"request":request})                                    
+
+                    if profil.is_valid():                           
+
+                        if "img_profile" in request.data and idResponseP.img_profile != "":
+                            
+                                nameImg = str(idResponseP.img_profile).split("/")[1]                
+                                file_path = "assets/img_profile/"+nameImg
+                                if os.path.isfile(file_path):                                            
+                                    os.remove(file_path)                                                                                      
+                                                              
+                        profil.save()
+                       
+                else:                                      
+
+                    if "img_profile" in request.data:
+                        img= request.data.__getitem__('img_profile')
+                    else:
+                        img = None
+
+    
+                    prof = Profile(
+                            user = us,
+                            img_profile = img
+                    )    
+                    prof.save()
 
                 return Response(status.HTTP_200_OK)
-            else:                
-                return Response(profil.errors)
+            else:     
+                return Response(status.HTTP_400_BAD_REQUEST)
         else:            
             return Response("Id no encontrado",status.HTTP_400_BAD_REQUEST) """
-         
+
+    
+        
