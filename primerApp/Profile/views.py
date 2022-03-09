@@ -80,7 +80,8 @@ class RegisterIdView(APIView):
             return Response("Id no encontrado",status.HTTP_400_BAD_REQUEST) 
 
 
-""" put por si no existe la conexion de user con profile """
+""" put por si no existe la conexion de user con profile 
+(usuarios registrados antes de que se agregara lo de profile)"""
 
 """  def put(self,request,pk,format=None):
         idResponse = self.get_objectU(pk)
