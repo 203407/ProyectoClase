@@ -63,12 +63,13 @@ class RegisterIdView(APIView):
             if profil.is_valid() and user.is_valid():                            
 
                 if "img_profile" in request.data:
-                    
-                    nameImg = str(idResponseP.img_profile).split("/")[1]                
-                    
-                    file_path = "assets/img_profile/"+nameImg
-                    if os.path.isfile(file_path):                                            
-                        os.remove(file_path)                       
+                                     
+                    if idResponseP.img_profile != '':
+                        nameImg = str(idResponseP.img_profile).split("/")[1]       
+                                            
+                        file_path = "assets/img_profile/"+nameImg
+                        if os.path.isfile(file_path):                                         
+                            os.remove(file_path) 
                     
                 user.save()                  
                 profil.save()    
